@@ -31,4 +31,23 @@ Gems:
     # +    {:allow_null=>false,
     # ...
 
+    # Also advanced diff:
+    pp people.diff(users, :hash)
+    # {:missing_fields=>{},
+    #  :extra_fields=>{},
+    #  :changed_fields=>
+    #   {:name=>
+    #     {:other=>
+    #       {:default=>nil,
+    #        :primary_key=>false,
+    #        :allow_null=>true,
+    #        :db_type=>"string"},
+    #      :own=>
+    #       {:default=>nil,
+    #        :primary_key=>false,
+    #        :allow_null=>false,
+    #        :db_type=>"string"}}},
+    #  :missing_indices=>{},
+    #  :extra_indices=>{[:name]=>{:unique=>false, :columns=>[:name]}}}
+
 That kinda sums it up.
