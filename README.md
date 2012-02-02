@@ -12,6 +12,8 @@ Gems:
 
 ## Usage
 
+### Schema enumerator
+
     enum = SchemaEnumerator.new({:adapter => 'mysql2', :database => 'test'})
     # see http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html
     # for help on connection to db
@@ -50,4 +52,14 @@ Gems:
     #  :missing_indices=>{},
     #  :extra_indices=>{[:name]=>{:unique=>false, :columns=>[:name]}}}
 
-That kinda sums it up.
+### Migration generator
+
+    enum = SchemaEnumerator.new({:adapter => 'mysql2', :database => 'test'})
+    people, users = enum.table(:people, :users)
+    # Generates non-destructive migration to make `users`
+    # as identical to `people` as possible
+    puts SchemaEnumerator::MigrationGenerator.new(:people, :users).sequel_migration
+    # alter_table(:users) do
+    #   column :job, "varchar(80)", {:null=>true}
+    #   index [:name], {:unique=>false}
+    # end

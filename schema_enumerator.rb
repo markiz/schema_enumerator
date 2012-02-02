@@ -33,7 +33,7 @@ class SchemaEnumerator
   end
 
   class Table
-    SCHEMA_FIELDS = [:db_type, :primary_key, :default, :allow_null].freeze
+    SCHEMA_FIELDS = [:db_type, :primary_key, :default, :allow_null].freeze unless defined?(SCHEMA_FIELDS)
 
     attr_reader :name, :db
     def initialize(db, name)
