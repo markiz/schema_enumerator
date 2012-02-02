@@ -151,7 +151,7 @@ if __FILE__ == $0
       result.should =~ %r(-.*allow_null.*true)m
       result.should =~ %r(\+.*allow_null.*false)m
       result.should =~ %r(-.*indices.*title_index)m
-      result.should =~ %r(\+.*indices.*{})m
+      result.should =~ %r(\+.*indices.*\{\})m
     end
   end
 end
