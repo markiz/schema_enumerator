@@ -2,6 +2,14 @@
 
 Simple schema enumerator and table differ.
 
+## Dependencies
+
+Gems:
+
+* sequel
+* diffy
+* gem for your db adapter (sqlite3, pg, mysql2, or whatever sequel supports)
+
 ## Usage
 
     enum = SchemaEnumerator.new({:adapter => 'mysql2', :database => 'test'})
