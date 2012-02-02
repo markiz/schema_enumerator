@@ -60,6 +60,6 @@ Gems:
     # as identical to `people` as possible
     puts SchemaEnumerator::MigrationGenerator.new(:people, :users).sequel_migration
     # alter_table(:users) do
-    #   column :job, "varchar(80)", {:null=>true}
-    #   index [:name], {:unique=>false}
+    #   add_column :job, "varchar(80)", {:null=>true}
+    #   add_index [:name], {:unique=>false}
     # end
