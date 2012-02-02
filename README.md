@@ -11,10 +11,17 @@ Gems:
 * diffy
 * gem for your db adapter (sqlite3, pg, mysql2, or whatever sequel supports)
 
+## Installation
+
+    git clone git://github.com/markiz/schema_enumerator.git && \
+    cd schema_enumerator && \
+    rake install
+
 ## Usage
 
 ### Schema enumerator
 
+    require 'schema_enumerator'
     enum = SchemaEnumerator.new({:adapter => 'mysql2', :database => 'test'})
     # see http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html
     # for help on connection to db
