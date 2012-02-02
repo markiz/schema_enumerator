@@ -1,2 +1,9 @@
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+coverage/*
+
+# Move along
 test.sql
 check_mentions.rb

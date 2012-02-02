@@ -1,3 +1,10 @@
+PATH
+  remote: .
+  specs:
+    schema_enumerator (0.5.0)
+      diffy
+      sequel (>= 3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -20,9 +27,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  diffy
   mysql2
   pg
-  rspec
-  sequel
+  rspec (~> 2)
+  schema_enumerator!
   sqlite3

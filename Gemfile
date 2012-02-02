@@ -1,14 +1,14 @@
 source :rubygems
-
-gem 'sequel'
+gemspec
+# gem 'sequel'
 
 # DB adapters
-gem 'sqlite3'
-gem 'pg'
-gem 'mysql2'
+# gem 'sqlite3'
+# gem 'pg'
+# gem 'mysql2'
 
-gem 'diffy'
+# gem 'diffy'
 
-group :test do
-  gem 'rspec'
-end
+# group :test do
+#   gem 'rspec'
+# end

@@ -1,6 +1,7 @@
 # SchemaEnumerator
 
-Simple schema enumerator and table differ.
+Simple schema enumerator and table differ. Also generates migrations
+for your tables from the diffs.
 
 ## Dependencies
 
