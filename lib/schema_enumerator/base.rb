@@ -153,18 +153,18 @@ class SchemaEnumerator
     end
 
     def fields_dataset
-      @fields_dataset ||= mysql_info_db[:COLUMNS].
-                          filter({
-                            :TABLE_SCHEMA => db_name,
-                            :TABLE_NAME   => name
-                          })
+      @@fields_dataset ||= mysql_info_db[:COLUMNS].
+                           filter({
+                             :TABLE_SCHEMA => db_name,
+                             :TABLE_NAME   => name
+                           })
     end
 
     def tables_dataset
-      @tables_dataset ||= mysql_info_db[:TABLES].
-                          filter({
-                            :TABLE_SCHEMA => db_name
-                          })
+      @@tables_dataset ||= mysql_info_db[:TABLES].
+                           filter({
+                             :TABLE_SCHEMA => db_name
+                           })
     end
 
     def db_name
@@ -172,7 +172,7 @@ class SchemaEnumerator
     end
 
     def mysql_info_db
-      @mysql_info_db ||= Sequel.connect(db.opts.merge(:database => "information_schema"))
+      @@mysql_info_db ||= Sequel.connect(db.opts.merge(:database => "information_schema"))
     end
 
     def mysql?
