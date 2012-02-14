@@ -57,10 +57,10 @@ class SchemaEnumerator
     alias_method :indexes, :indices
 
     def to_hash
-      {
+      Util::SortedHash.new({
         :fields  => fields,
         :indices => indices
-      }
+      })
     end
 
     def diff(other_table, format = :text)
@@ -117,7 +117,7 @@ class SchemaEnumerator
         diff[:extra_indices][index] = other_indices[index]
       end
 
-      diff
+      Util::SortedHash.new(diff)
     end
 
     protected

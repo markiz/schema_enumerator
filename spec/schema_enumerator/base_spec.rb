@@ -74,7 +74,7 @@ describe SchemaEnumerator do
     it "can diff tables and return results as hash" do
       blueprint, checked_table = subject.table(:test_table_1, :test_table_2)
       result = blueprint.diff(checked_table, :hash)
-      result.should be_a(Hash)
+      result.should respond_to(:keys)
       result.keys.should include(:missing_indices, :extra_indices,
                                  :missing_fields, :extra_fields,
                                  :changed_fields)
