@@ -29,7 +29,7 @@ describe SchemaEnumerator do
 
   let(:connect_options) { { :adapter => 'sqlite' } }
 
-  before(:all) { create_tables(subject.db) }
+  before(:each) { create_tables(subject.db) }
   subject { described_class.new(connect_options) }
 
   it "has a list of table names" do
@@ -61,12 +61,12 @@ describe SchemaEnumerator do
     # -    {:allow_null=>true,
     # +    {:allow_null=>false,
     # And
-    #- :indices=>{:test_table_1_title_index=>{:unique=>false, :columns=>[:title]}}}
+    # - :indices=>{[:title] => {:columns => [:title],:unique => false}}}
     # + :indices=>{}}
     #
-    result.should =~ %r(-.*allow_null.*true)m
+    result.should =~ %r(\-.*allow_null.*true)m
     result.should =~ %r(\+.*allow_null.*false)m
-    result.should =~ %r(-.*indices.*title_index)m
+    result.should =~ %r(\-.*indices.*\[:title\])m
     result.should =~ %r(\+.*indices.*\{\})m
   end
 

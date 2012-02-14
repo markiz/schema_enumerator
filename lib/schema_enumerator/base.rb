@@ -59,7 +59,7 @@ class SchemaEnumerator
     def to_hash
       Util::SortedHash.new({
         :fields  => fields,
-        :indices => indices
+        :indices => indices_by_columns
       })
     end
 
