@@ -44,9 +44,19 @@ class SchemaEnumerator
       @schema ||= db.schema(name, :reload => true)
     end
 
+    def engine
+      if mysql?
+        @engine ||= detect_engine
+      end
+    end
+
     def fields
       @fields ||= schema.inject({}) do |result, (field, props)|
         result[field.to_sym] = slice_hash(props, SCHEMA_FIELDS)
+        if mysql?
+          result[field.to_sym][:collate] = detect_collation(field)
+          result[field.to_sym][:charset] = detect_charset(field)
+        end
         result
       end
     end
@@ -57,10 +67,12 @@ class SchemaEnumerator
     alias_method :indexes, :indices
 
     def to_hash
-      Util::SortedHash.new({
+      result = Util::SortedHash.new({
         :fields  => fields,
         :indices => indices_by_columns
       })
+      result[:engine] = engine if mysql?
+      result
     end
 
     def diff(other_table, format = :text)
@@ -121,6 +133,51 @@ class SchemaEnumerator
     end
 
     protected
+
+    def detect_engine
+      tables_dataset.select(:ENGINE).
+                     filter(:TABLE_NAME => name).
+                     first[:ENGINE]
+    end
+
+    def detect_collation(field)
+      fields_dataset.select(:COLLATION_NAME).
+                     filter(:COLUMN_NAME => field.to_s).
+                     first[:"COLLATION_NAME"]
+    end
+
+    def detect_charset(field)
+      fields_dataset.select(:CHARACTER_SET_NAME).
+                     filter(:COLUMN_NAME => field.to_s).
+                     first[:CHARACTER_SET_NAME]
+    end
+
+    def fields_dataset
+      @fields_dataset ||= mysql_info_db[:COLUMNS].
+                          filter({
+                            :TABLE_SCHEMA => db_name,
+                            :TABLE_NAME   => name
+                          })
+    end
+
+    def tables_dataset
+      @tables_dataset ||= mysql_info_db[:TABLES].
+                          filter({
+                            :TABLE_SCHEMA => db_name
+                          })
+    end
+
+    def db_name
+      db.opts[:database]
+    end
+
+    def mysql_info_db
+      @mysql_info_db ||= Sequel.connect(db.opts.merge(:database => "information_schema"))
+    end
+
+    def mysql?
+      db.adapter_scheme.to_s =~ /mysql/
+    end
 
     def slice_hash(hash, keys)
       hash.dup.delete_if {|k,_| !keys.include?(k) }

@@ -1,34 +1,42 @@
+require 'logger'
 require 'spec_helper'
 
 describe SchemaEnumerator do
   def create_tables(db)
-    db.create_table :test_table_1, :force => true do
+    db.create_table! :test_table_1 do
       primary_key :id, :null => false
-      column :title, :string
-      column :body,  :text
+      column :title, String
+      column :body, :text
       index :title
     end
 
-    db.create_table :test_table_2, :force => true do
+    db.create_table! :test_table_2 do
       primary_key :id, :null => false
-      column :title, :string, :null => false
+      column :title, String, :null => false
       column :body, :text
     end
 
-    db.create_table :test_table_3, :force => true do
+    db.create_table! :test_table_3 do
       primary_key :id, :null => false
       column :body, :text
     end
 
-    db.create_table :test_table_4, :force => true do
+    db.create_table! :test_table_4 do
       primary_key :id, :null => false
-      column :title, :string, :null => false, :size => 50
+      column :title, String, :null => false, :size => 50
       column :body, :text
+    end
+
+    db.create_table! :test_table_5, :engine => "InnoDB" do
+      primary_key :id, :null => false
+      column :body, "TEXT CHARSET utf8 COLLATE utf8_general_ci"
     end
   end
-
-  let(:connect_options) { { :adapter => 'sqlite' } }
-
+  let(:connect_options) { {
+    :adapter => 'mysql2',
+    :database => "schenum_test",
+    :logger => Logger.new("/dev/null")
+  } }
   before(:each) { create_tables(subject.db) }
   subject { described_class.new(connect_options) }
 
@@ -41,10 +49,20 @@ describe SchemaEnumerator do
 
   it "has fields" do
     fields = subject.table(:test_table_1).fields
-    fields[:id][:db_type].should == "integer"
+    fields[:id][:db_type].should =~ /int/
     fields[:id][:primary_key].should be_true
     fields[:id][:allow_null].should be_false
     fields[:body][:allow_null].should be_true
+  end
+
+  it "knows about engines" do
+    subject.table(:test_table_5).engine.should == "InnoDB"
+  end
+
+  it "knows about charsets and collations" do
+    fields = subject.table(:test_table_5).fields
+    fields[:body][:charset].should == "utf8"
+    fields[:body][:collate].should == "utf8_general_ci"
   end
 
   it "has indices" do
@@ -88,7 +106,7 @@ describe SchemaEnumerator do
       missing_field[:default].should     == nil
       missing_field[:primary_key].should == false
       missing_field[:allow_null].should  == true
-      missing_field[:db_type].should     == "string"
+      missing_field[:db_type].should     =~ /varchar/
     end
 
     it "recognizes extra fields" do
@@ -99,7 +117,7 @@ describe SchemaEnumerator do
       missing_field[:default].should     == nil
       missing_field[:primary_key].should == false
       missing_field[:allow_null].should  == true
-      missing_field[:db_type].should     == "string"
+      missing_field[:db_type].should     =~ /varchar/
     end
 
     it "recognizes changed fields" do
@@ -107,8 +125,8 @@ describe SchemaEnumerator do
       result = blueprint.diff(checked_table, :hash)
       field = result[:changed_fields][:title]
       field.should_not be_nil
-      field[:own][:db_type].should      == "string"
-      field[:other][:db_type].should    == "string(50)"
+      field[:own][:db_type].should      == "varchar(255)"
+      field[:other][:db_type].should    == "varchar(50)"
       field[:own][:allow_null].should   == true
       field[:other][:allow_null].should == false
     end
