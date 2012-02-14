@@ -135,35 +135,45 @@ class SchemaEnumerator
     protected
 
     def detect_engine
-      tables_dataset.select(:ENGINE).
-                     filter(:TABLE_NAME => name).
-                     first[:ENGINE]
+      tables_dataset.select(:engine).
+                     filter(:table_name => name).
+                     first[:engine]
     end
 
     def detect_collation(field)
-      fields_dataset.select(:COLLATION_NAME).
-                     filter(:COLUMN_NAME => field.to_s).
-                     first[:"COLLATION_NAME"]
+      field_data(field, :collation_name)
     end
 
     def detect_charset(field)
-      fields_dataset.select(:CHARACTER_SET_NAME).
-                     filter(:COLUMN_NAME => field.to_s).
-                     first[:CHARACTER_SET_NAME]
+      field_data(field, :character_set_name)
+    end
+
+    def field_data(field, key)
+      fields_data[field.to_s][key]
+    end
+
+    def fields_data
+      @fields_data ||= fields_dataset.select(:column_name,
+                                             :character_set_name,
+                                             :collation_name).all.
+                                      inject({}) do |result, data|
+                                        result[data[:column_name]] = data
+                                        result
+                                      end
     end
 
     def fields_dataset
-      @@fields_dataset ||= mysql_info_db[:COLUMNS].
+      @@fields_dataset ||= mysql_info_db[:columns].
                            filter({
-                             :TABLE_SCHEMA => db_name,
-                             :TABLE_NAME   => name
+                             :table_schema => db_name,
+                             :table_name   => name
                            })
     end
 
     def tables_dataset
-      @@tables_dataset ||= mysql_info_db[:TABLES].
+      @@tables_dataset ||= mysql_info_db[:tables].
                            filter({
-                             :TABLE_SCHEMA => db_name
+                             :table_schema => db_name
                            })
     end
 
