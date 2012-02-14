@@ -1,6 +1,7 @@
 #
 # Hash that keeps its keys sorted
 #
+require 'schema_enumerator/core_ext/symbol'
 class SchemaEnumerator
   module Util
     class SortedHash
@@ -83,11 +84,7 @@ class SchemaEnumerator
       protected
 
       def sort_keys!
-        @keys = @hash.keys.sort do |a,b|
-          a = a.to_s if a.kind_of?(Symbol)
-          b = b.to_s if b.kind_of?(Symbol)
-          a <=> b
-        end
+        @keys = @hash.keys.sort
       end
 
       def recursively_convert_hashes!
