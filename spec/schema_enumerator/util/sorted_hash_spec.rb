@@ -12,6 +12,10 @@ describe SchemaEnumerator::Util::SortedHash do
   subject { described_class.new(initial_hash) }
 
   context "initialization" do
+    it "can instantiate from empty hash" do
+      described_class.new.keys.should == []
+    end
+
     it "recursively converts hashes" do
       subject = described_class.new(:a => {:b => :c})
       subject.class.should     == described_class
@@ -63,6 +67,16 @@ describe SchemaEnumerator::Util::SortedHash do
         subject[:b] = "What"
         subject.map {|k,v| v }.should == [:b, "What", "Imagination", "Hello", "World"]
       end
+    end
+  end
+
+  describe "#empty?" do
+    it "returns false for non-empty hash" do
+      subject.should_not be_empty
+    end
+
+    it "returns true for empty hash" do
+      described_class.new.should be_empty
     end
   end
 

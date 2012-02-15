@@ -6,7 +6,7 @@ class SchemaEnumerator
   module Util
     class SortedHash
       include Enumerable
-      def initialize(hash)
+      def initialize(hash = {})
         @hash = hash
         sort_keys!
         recursively_convert_hashes!
@@ -24,6 +24,10 @@ class SchemaEnumerator
         @hash[key] = value
         sort_keys!
         recursively_convert_hashes!
+      end
+
+      def empty?
+        @hash.empty?
       end
 
       def keys
