@@ -62,7 +62,7 @@ class SchemaEnumerator
     end
 
     def indices
-      @indices ||= db.indexes(name)
+      @indices ||= db.indexes(name, :partial => true)
     end
     alias_method :indexes, :indices
 
