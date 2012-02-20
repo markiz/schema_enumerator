@@ -1,5 +1,9 @@
+begin
+  require "diffy"
+rescue LoadError => e
+  # Plaintext diffs will not work without diffy
+end
 require "sequel"
-require "diffy"
 require "pp"
 
 class SchemaEnumerator
@@ -78,6 +82,7 @@ class SchemaEnumerator
     def diff(other_table, format = :text)
       case format
       when :text, :color, :html
+
         own_string   = PP.pp(self.to_hash, "")
         other_string = PP.pp(other_table.to_hash, "")
         Diffy::Diff.new(own_string, other_string).to_s(format)
