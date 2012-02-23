@@ -16,23 +16,27 @@ class SchemaEnumerator
   end
 
   def tables
-    @tables ||= db.tables.inject({}) do |result, table_name|
+    @tables ||= tables_by_names.values
+  end
+
+  def table(*names)
+    if names.count > 1
+      names.map {|name| tables_by_names[name.to_s] }
+    else
+      tables_by_names[names[0].to_s]
+    end
+  end
+
+  def tables_by_names
+    @tables_by_names ||= db.tables.inject({}) do |result, table_name|
       table_name = table_name.to_s
       result[table_name] ||= Table.new(db, table_name)
       result
     end
   end
 
-  def table(*names)
-    if names.count > 1
-      names.map {|name| tables[name.to_s] }
-    else
-      tables[names[0].to_s]
-    end
-  end
-
   def table_names
-    tables.keys
+    tables_by_names.keys
   end
 
   class Table
