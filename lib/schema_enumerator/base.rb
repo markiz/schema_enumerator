@@ -7,12 +7,16 @@ require "sequel"
 require "pp"
 
 class SchemaEnumerator
+  def self.loggers
+    @loggers ||= []
+  end
+
   def initialize(db_connect_options)
     @db_connect_options = db_connect_options
   end
 
   def db
-    @db ||= Sequel.connect(@db_connect_options)
+    @db ||= Sequel.connect(@db_connect_options, :loggers => SchemaEnumerator.loggers)
   end
 
   def tables
@@ -191,7 +195,8 @@ class SchemaEnumerator
     end
 
     def mysql_info_db
-      @@mysql_info_db ||= Sequel.connect(db.opts.merge(:database => "information_schema"))
+      @@mysql_info_db ||= Sequel.connect(db.opts.merge(:database => "information_schema"),
+                                         :loggers => SchemaEnumerator.loggers)
     end
 
     def mysql?
