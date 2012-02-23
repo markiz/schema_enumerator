@@ -176,7 +176,7 @@ class SchemaEnumerator
     end
 
     def fields_dataset
-      @@fields_dataset ||= mysql_info_db[:columns].
+      @fields_dataset ||= mysql_info_db[:columns].
                            filter({
                              :table_schema => db_name,
                              :table_name   => name
@@ -184,7 +184,7 @@ class SchemaEnumerator
     end
 
     def tables_dataset
-      @@tables_dataset ||= mysql_info_db[:tables].
+      @tables_dataset ||= mysql_info_db[:tables].
                            filter({
                              :table_schema => db_name
                            })
