@@ -138,7 +138,8 @@ describe SchemaEnumerator do
       missing_index.should_not be_nil
       cols, props = missing_index
       cols.should  == [:title]
-      props.should == {:columns => [:title], :unique => false}
+      props[:columns].should == [:title]
+      props[:unique].should == false
     end
 
     it "recognizes extra indices" do
@@ -148,7 +149,8 @@ describe SchemaEnumerator do
       extra_index.should_not be_nil
       cols, props = extra_index
       cols.should  == [:title]
-      props.should == {:columns => [:title], :unique => false}
+      props[:columns].should == [:title]
+      props[:unique].should == false
     end
   end
 end

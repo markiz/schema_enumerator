@@ -90,7 +90,6 @@ class SchemaEnumerator
     def diff(other_table, format = :text)
       case format
       when :text, :color, :html
-
         own_string   = PP.pp(self.to_hash, "")
         other_string = PP.pp(other_table.to_hash, "")
         Diffy::Diff.new(own_string, other_string).to_s(format)
@@ -100,8 +99,16 @@ class SchemaEnumerator
     end
 
     def indices_by_columns
-      @indices_by_columns ||= indices.inject({}) do |result, (name, index)|
-        result[index[:columns]] = index
+      indices.inject({}) do |result, (name, index)|
+        result[index[:columns]] = index.dup
+        result
+      end
+    end
+
+    def indices_by_columns_with_names
+      indices.inject({}) do |result, (name, index)|
+        result[index[:columns]] = index.dup
+        result[index[:columns]][:name] = name
         result
       end
     end
@@ -114,8 +121,8 @@ class SchemaEnumerator
       }
 
       other_fields = other_table.fields
-      other_indices = other_table.indices_by_columns
-      indices = indices_by_columns
+      other_indices = other_table.indices_by_columns_with_names
+      indices = indices_by_columns_with_names
 
       (fields.keys - other_fields.keys).each do |field|
         diff[:missing_fields][field] = fields[field]

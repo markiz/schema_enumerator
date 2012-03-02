@@ -28,28 +28,27 @@ describe SchemaEnumerator::MigrationGenerator do
   it "creates a sequel migration" do
     migration = subject.sequel_migration
     migration.should be_a(String)
-    migration.should =~ /alter_table\(:test_table_2\)/
   end
 
   it "adds missing fields" do
     migration = subject.sequel_migration
-    migration.should =~ /add_column :pid, "integer"/
+    migration.should =~ /add_column.*:pid, "integer"/
   end
 
   it "knows about some column params" do
     migration = subject.sequel_migration
-    migration.should =~ /add_column :pid,.*:default\s*=>\s*(1|\"1\")/
-    migration.should =~ /add_column :pid,.*:null\s*=>\s*false/
+    migration.should =~ /add_column.*:pid.*:default\s*=>\s*(1|\"1\")/
+    migration.should =~ /add_column.*:pid.*:null\s*=>\s*false/
   end
 
   it "adds missing indices" do
     migration = subject.sequel_migration
-    migration.should =~ /add_index \[:title\]/
-    migration.should =~ /add_index \[:pid\]/
+    migration.should =~ /add_index.*\[:title\]/
+    migration.should =~ /add_index.*\[:pid\]/
   end
 
   it "knows about some index params" do
     migration = subject.sequel_migration
-    migration.should =~ /add_index \[:pid\].*:unique\s*=>\s*true/
+    migration.should =~ /add_index.*\[:pid\].*:unique\s*=>\s*true/
   end
 end
