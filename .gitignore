@@ -7,3 +7,4 @@ coverage/*
 # Move along
 test.sql
 check_mentions.rb
+Gemfile.lock
