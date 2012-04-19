@@ -153,4 +153,26 @@ describe SchemaEnumerator do
       props[:unique].should == false
     end
   end
+
+  describe SchemaEnumerator::Table do
+    subject { SchemaEnumerator.new(connect_options).table(:test_table_1) }
+
+    describe "#matches?" do
+      it "returns true when every truthy field in :fields hash exists" do
+        subject.matches?(:fields => {:id => true}).should be_true
+      end
+
+      it "returns true when every falsy field in :fields hash doesn't exist" do
+        subject.matches?(:fields => {:lol => false}).should be_true
+      end
+
+      it "returns false when some truthy fields from :fields hash don't exist" do
+        subject.matches?(:fields => {:id => true, :lol => true}).should be_false
+      end
+
+      it "returns false when some falsy fields from :fields hash exist" do
+        subject.matches?(:fields => {:id => false, :lol => false}).should be_false
+      end
+    end
+  end
 end

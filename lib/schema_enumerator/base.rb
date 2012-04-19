@@ -78,6 +78,23 @@ class SchemaEnumerator
     end
     alias_method :indexes, :indices
 
+    def matches?(check_hash = {})
+      fields  = check_hash.fetch(:fields,  {})
+      indices = check_hash.fetch(:indices, {})
+      matches_by_fields?(fields) && matches_by_indices?(indices)
+    end
+
+    def matches_by_fields?(fields_hash)
+      fields_hash.each do |field, assumption|
+        return false unless fields.has_key?(field) == !!assumption
+      end
+      true
+    end
+
+    def matches_by_indices?(indices_hash)
+      true
+    end
+
     def to_hash
       result = Util::SortedHash.new({
         :fields  => fields,
