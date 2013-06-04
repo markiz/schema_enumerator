@@ -11,13 +11,16 @@ class SchemaEnumerator
     @loggers ||= []
   end
 
-  def initialize(db_connect_options)
-    @db_connect_options = db_connect_options
+  def initialize(db_or_connect_options)
+    case db_or_connect_options
+    when Sequel::Database
+      @db = db_or_connect_options
+    else
+      @db = Sequel.connect(db_or_connect_options, :loggers => SchemaEnumerator.loggers)
+    end
   end
 
-  def db
-    @db ||= Sequel.connect(@db_connect_options, :loggers => SchemaEnumerator.loggers)
-  end
+  attr_reader :db
 
   def tables
     @tables ||= tables_by_names.values

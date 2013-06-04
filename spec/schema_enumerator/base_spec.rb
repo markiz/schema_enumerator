@@ -154,6 +154,15 @@ describe SchemaEnumerator do
     end
   end
 
+  it "can be initialized with a Sequel DB instead of connect options" do
+    db = Sequel.connect("sqlite:///")
+    db.create_table(:hello) { serial(:id) }
+    schenum = SchemaEnumerator.new(db)
+    schenum.db.should == db
+    schenum.table_names.should == ["hello"]
+  end
+
+
   describe SchemaEnumerator::Table do
     subject { SchemaEnumerator.new(connect_options).table(:test_table_1) }
 
