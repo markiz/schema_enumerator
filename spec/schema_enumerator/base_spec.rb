@@ -164,7 +164,7 @@ describe SchemaEnumerator do
 
 
   describe SchemaEnumerator::Table do
-    subject { SchemaEnumerator.new(connect_options).table(:test_table_1) }
+    subject { SchemaEnumerator.new(connect_options).table(:test_table_2) }
 
     describe "#matches?" do
       it "returns true when every truthy field in :fields hash exists" do
@@ -181,6 +181,22 @@ describe SchemaEnumerator do
 
       it "returns false when some falsy fields from :fields hash exist" do
         subject.matches?(:fields => {:id => false, :lol => false}).should be_false
+      end
+
+      it "can match by indices" do
+        subject.matches?(:indices => {:title => true}).should be_false
+        subject.db.alter_table(:test_table_2) { add_index [:title] }
+        subject.reload
+        subject.matches?(:indices => {:title => true}).should be_true
+      end
+
+      it "can do a negative match by indices" do
+        subject.db.alter_table(:test_table_2) { add_index [:title] }
+        subject.reload
+        subject.matches?(:indices => {:title => false}).should be_false
+        subject.db.alter_table(:test_table_2) { drop_index [:title] }
+        subject.reload
+        subject.matches?(:indices => {:title => false}).should be_true
       end
     end
   end

@@ -55,6 +55,12 @@ class SchemaEnumerator
       @name = name
     end
 
+    def reload
+      @schema = nil
+      @fields = nil
+      @indices = nil
+    end
+
     def schema
       @schema ||= db.schema(name, :reload => true)
     end
@@ -95,6 +101,10 @@ class SchemaEnumerator
     end
 
     def matches_by_indices?(indices_hash)
+      indices_hash.each do |index_columns, assumption|
+        index_columns = [index_columns].flatten
+        return false unless indices_by_columns.has_key?(index_columns) == !!assumption
+      end
       true
     end
 
